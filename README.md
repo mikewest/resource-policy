@@ -43,3 +43,11 @@ Resource-Policy: site=same-site, frame-ancestors=same-site, dest=iframe
 And so on, and so on...
 
 These headers would be cached along with the response, and could be enforced by the client, even if the cached response was injected by a Service Worker, or extracted from a bundle. 
+
+## FAQ
+
+### Couldn't we just extend `Cross-Origin-Resource-Policy` instead of minting a new header?
+
+Yes. We could. Something like `Cross-Origin-Resource-Policy: site=same-site, frame-ancestors=same-site, dest=iframe` is certainly possible to ship, as CORP is defined as failing open. If folks could quickly align on a new syntax, there might still be room to change things up, but it would be somewhat unfortunate if a server that wished to impose _more_ restrictions on a resource ended up instead imposing _fewer_ unless they engaged in UA sniffing for browsers that didn't support the new hotness.
+
+Shipping a new header avoids this problem, at the expense of adding complexity (and a deprecation story) to the platform. It might well be more reasonable to accept the backwards compatibility story above by reusing the existing header instead.
