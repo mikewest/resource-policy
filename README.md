@@ -1,5 +1,7 @@
 # Resource Policy
 
+_[@mikewest](https://github.com/mikewest) & [@kinu](https://github.com/kinu), May 2020_
+
 ## A Problem
 
 Servers have a good deal of control over whether or not they deliver a resource in response to a specific request. Fetch Metadata headers provide enough information to evaluate the risk of replying to a given request, and allow servers to implement reasonable heuristics around the way a request was made, and the context in which it will be used. These heuristics can be arbitrarily complex, and [can be a powerful mitigation tool](https://webappsec.dev/assets/pub/Google_IO-Securing_Web_Apps_with_Modern_Platform_Features.pdf#page=48).
