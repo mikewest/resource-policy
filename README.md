@@ -12,18 +12,32 @@ In both these cases, the decision is binary: deliver the resource to be used in 
 
 `Cross-Origin-Resource-Policy` is a declarative version of a narrow slice of the server-side logic discussed above. Rather than evaluating the `Sec-Fetch-Site` header themselves, servers can instruct clients to discard a given response if it didn't come from an expected source. Perhaps we could extend servers' capability to make such declarations to include a broader swath of information available on the client-side.
 
-For instance, servers may wish to ensure that a given resource is only loaded into certain contexts: it may be a document intended for framing, in which case it shouldn't be loadable as a script or image or etc. Perhaps servers could declare a set of [destinations](https://www.w3.org/TR/fetch-metadata/#sec-fetch-dest-header), [modes](https://www.w3.org/TR/fetch-metadata/#sec-fetch-mode-header, or [site relationships](https://www.w3.org/TR/fetch-metadata/#sec-fetch-site-header) for which a resource is valid, and ask the client to reject it if used elsewhere?
+For instance, servers may wish to ensure that a given resource is only loaded into certain contexts: it may be a document intended for framing, in which case it shouldn't be loadable as a script or image or etc. It may be a user-provided image, in which case it shouldn't be loaded as a plugin. Perhaps servers could declare a set of [destinations](https://www.w3.org/TR/fetch-metadata/#sec-fetch-dest-header), [modes](https://www.w3.org/TR/fetch-metadata/#sec-fetch-mode-header), or [site relationships](https://www.w3.org/TR/fetch-metadata/#sec-fetch-site-header) for which a resource is valid, and ask the client to reject it if used elsewhere?
 
 Perhaps we could deprecate `Cross-Origin-Resource-Policy` in favor of a new response header (just `Resource-Policy`?) that has a more granular syntax. Something like the following might be a reasonable syntax to lock a resource to an embedded context:
 
 ```http
-Cross-Origin-Resource-Policy: site=same-site, dest=(iframe frame), mode=navigate
+Resource-Policy: dest=(iframe frame)
 ```
 
 Or to ensure that a resource is only used as an image:
 
 ```http
-Cross-Origin-Resource-Policy: site=same-site, dest=image
+Resource-Policy: dest=image
 ```
 
-These headers would be cached along with the response, and could be enforced by the client even in the absense of a network connection. That seems pretty valuable.
+The header would allow multiple restrictions, and enforce each of them. That is, to guarantee that a resource is used only by same-site endpoints as a script that was requested in CORS mode:
+
+```http
+Resource-Policy: site=same-site, dest=script, mode=cors
+```
+
+Or (if [w3c/webappsec-fetch-metadata#56](https://github.com/w3c/webappsec-fetch-metadata/issues/56) becomes a thing) to assert that a resource is only used by same-site endpoints as an iframe whose ancestors are also same-site:
+
+```http
+Resource-Policy: site=same-site, frame-ancestors=same-site, dest=iframe
+```
+
+And so on, and so on...
+
+These headers would be cached along with the response, and could be enforced by the client, even if the cached response was injected by a Service Worker, or extracted from a bundle. 
