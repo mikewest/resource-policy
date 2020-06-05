@@ -31,13 +31,13 @@ Resource-Policy: dest=image
 The header would allow multiple restrictions, and enforce each of them. That is, to guarantee that a resource is used only by same-site endpoints as a script that was requested in CORS mode:
 
 ```http
-Resource-Policy: site=same-site, dest=script, mode=cors
+Resource-Policy: site=(same-site same-origin none), dest=script, mode=cors
 ```
 
 Or (if [w3c/webappsec-fetch-metadata#56](https://github.com/w3c/webappsec-fetch-metadata/issues/56) becomes a thing) to assert that a resource is only used by same-site endpoints as an iframe whose ancestors are also same-site:
 
 ```http
-Resource-Policy: site=same-site, frame-ancestors=same-site, dest=iframe
+Resource-Policy: site=(same-site same-origin none), frame-ancestors=same-site, dest=iframe
 ```
 
 And so on, and so on...
@@ -51,3 +51,7 @@ These headers would be cached along with the response, and could be enforced by 
 Yes. We could. Something like `Cross-Origin-Resource-Policy: site=same-site, frame-ancestors=same-site, dest=iframe` is certainly possible to ship, as CORP is defined as failing open. If folks could quickly align on a new syntax, there might still be room to change things up, but it would be somewhat unfortunate if a server that wished to impose _more_ restrictions on a resource ended up instead imposing _fewer_ unless they engaged in UA sniffing for browsers that didn't support the new hotness.
 
 Shipping a new header avoids this problem, at the expense of adding complexity (and a deprecation story) to the platform. It might well be more reasonable to accept the backwards compatibility story above by reusing the existing header instead.
+
+### `site=(same-site same-origin none)` seems verbose.
+
+Yes, it does. Perhaps we could come up with categorizations for these if we expect them to appear often. Or perhaps we could teach the client that `same-origin` implies `(same-origin none)` and `same-site` implies `(same-site same-origin none)`.
