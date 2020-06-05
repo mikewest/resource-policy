@@ -4,7 +4,7 @@ _[@mikewest](https://github.com/mikewest) & [@kinu](https://github.com/kinu), Ma
 
 ## A Problem
 
-Servers have a good deal of control over whether or not they deliver a resource in response to a specific request. Fetch Metadata headers provide enough information to evaluate the risk of replying to a given request, and allow servers to implement reasonable heuristics around the way a request was made, and the context in which it will be used. These heuristics can be arbitrarily complex, and [can be a powerful mitigation tool](https://webappsec.dev/assets/pub/Google_IO-Securing_Web_Apps_with_Modern_Platform_Features.pdf#page=48).
+Servers have a good deal of control over whether or not they deliver a resource in response to a specific request. Fetch Metadata headers provide enough information to evaluate the risk of replying to a given request, and allow servers to implement reasonable heuristics around the way a request was made, and the context in which it will be used. These heuristics can be arbitrarily complex, and [can be a powerful mitigation tool](https://secmetadata.appspot.com/).
 
 Once a resource is delivered, however, the server loses control. Consider a Service Worker which fetches a resource: servers can examine the incoming `Sec-Fetch-*` headers, and make a decision about whether or not to respond to that `fetch()`. Once the resource is cached, however, the server no longer has the ability to prevent the Service Worker laundering it into unexpected contexts. Likewise, servers have little control over the way that content delivered in containers like [Web Bundles](https://web.dev/web-bundles/) will be used.
 
