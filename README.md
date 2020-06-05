@@ -55,3 +55,12 @@ Shipping a new header avoids this problem, at the expense of adding complexity (
 ### `site=(same-site same-origin none)` seems verbose.
 
 Yes, it does. Perhaps we could come up with categorizations for these if we expect them to appear often. Or perhaps we could teach the client that `same-origin` implies `(same-origin none)` and `same-site` implies `(same-site same-origin none)`.
+
+### Google's "Resource Isolation Policy" can't be expressed in this language.
+
+Google suggests using a policy that rejects requests where `Sec-Fetch-Site == 'cross-site' AND (Sec-Fetch-Mode != 'navigate'/'nested-navigate' OR method NOT IN [GET, HEAD])`. This can't be expressed in this proposal for two reasons:
+
+1. It requires logic more complex than simple intersection.
+2. It checks against `method` (which, of course, we could easily add).
+
+It might be worthwhile to add some complexity to the proposal to support this kind of check. It might also be worthwhile to encode some high-level set of canonical checks that we think are reasonable into explicit declarations. If the server says "This is a subresource.", then we could apply something like the resource isolation check. The server could likewise say "This is a top-level document." or "This is an embeddable document." with similar implications for the response. As more folks deploy Fetch Metadata-based rulesets, we'll hopefully improve our collective understanding of what these categories might look like...
